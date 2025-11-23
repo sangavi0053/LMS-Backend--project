@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #logoutBtn:hover {
+      background-color: #d93636;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔓 Logout Button -->
+  <button id="logoutBtn" onclick="logout()">Logout</button>
+
+  <h2>Welcome to Your LMS Dashboard</h2>
+  <div id="course-list">Loading courses...</div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Access denied. Please login first.");
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      alert("You have been logged out.");
+      window.location.href = "login.html";
+    }
+
+    async function loadCourses() {
+      try {
+        const response = await fetch("http://localhost:5000/api/courses", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+
+        const data = await response.json();
+        const courseList = document.getElementById("course-list");
+        courseList.innerHTML = "";
+
+        if (!Array.isArray(data) || data.length === 0) {
+          courseList.innerHTML = "<p>No courses found.</p>";
+          return;
+        }
+
+        data.forEach(course => {
+          const div = document.createElement("div");
+          div.className = "course-card";
+          div.innerHTML = `
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <small>Instructor: ${course.instructor}</small>
+          `;
+          courseList.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading courses:", error);
+        const courseList = document.getElementById("course-list");
+        courseList.innerHTML = `<p style="color: red;">Error loading courses.</p>`;
+      }
+    }
+
+    loadCourses();
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LMS Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f5;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #logoutBtn:hover {
+      background-color: #d93636;
+    }
+    #courseList {
+      max-width: 700px;
+      margin: 60px auto 0;
+    }
+    .course {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .course h3 {
+      margin: 0 0 5px;
+      color: #007acc;
+    }
+    .course p {
+      margin: 5px 0;
+      color: #444;
+    }
+    .course small {
+      display: block;
+      margin-top: 8px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔓 Logout Button -->
+  <button id="logoutBtn" onclick="logout()">Logout</button>
+
+  <!-- 📚 Dashboard Title -->
+  <h1>📚 Welcome to Your LMS Dashboard</h1>
+
+  <!-- 📦 Courses Container -->
+  <div id="courseList">Loading courses...</div>
+
+  <!-- 🔐 Token Check -->
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Access denied. Please login first.");
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+
+    // 📡 Fetch Courses From Backend
+    fetch("http://localhost:5000/api/courses", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(courses => {
+      const courseList = document.getElementById("courseList");
+      courseList.innerHTML = '';
+
+      if (courses.length === 0) {
+        courseList.innerHTML = '<p>No courses available.</p>';
+        return;
+      }
+
+      courses.forEach(course => {
+        const div = document.createElement("div");
+        div.className = "course";
+        const date = new Date(course.createdAt).toLocaleDateString();
+
+        div.innerHTML = `
+          <h3>${course.title}</h3>
+          <p>${course.description}</p>
+          <small><strong>Created By:</strong> ${course.instructor || "Unknown"}</small>
+          <small><strong>Added On:</strong> ${date}</small>
+        `;
+        courseList.appendChild(div);
+      });
+    })
+    .catch(err => {
+      console.error("❌ Error loading courses:", err);
+      document.getElementById("courseList").innerHTML = "<p style='color:red;'>Error loading courses.</p>";
+    });
+  </script>
+
+</body>
+</html>

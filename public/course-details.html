@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Course Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    nav {
+      background-color: #333;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+
+    nav a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+    }
+
+    .details {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="add-course.html">Add Course</a>
+    <a href="course-list.html">Course List</a>
+  </nav>
+
+  <div class="details" id="courseDetails">
+    <p>Loading course details...</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get('id');
+
+    fetch(`http://localhost:5000/api/courses/${courseId}`)
+      .then(res => res.json())
+      .then(course => {
+        const container = document.getElementById('courseDetails');
+        container.innerHTML = `
+          <h1>${course.name || course.title}</h1>
+          <p><strong>Description:</strong> ${course.description}</p>
+          <p><strong>Instructor:</strong> ${course.instructor}</p>
+          <p><strong>Added on:</strong> ${new Date(course.date).toLocaleDateString()}</p>
+        `;
+      })
+      .catch(error => {
+        console.error("Error loading course:", error);
+        document.getElementById('courseDetails').innerHTML = "<p>Course not found.</p>";
+      });
+  </script>
+
+</body>
+</html>
