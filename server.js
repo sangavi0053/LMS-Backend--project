@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -16,9 +17,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => console.error("❌ MongoDB error:", err));
 
 // Schemas
 const UserSchema = new mongoose.Schema({ email: String, password: String });
@@ -33,6 +37,8 @@ const CourseSchema = new mongoose.Schema({
 const Course = mongoose.model('Course', CourseSchema);
 
 // Routes
+
+// Register User
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -41,10 +47,12 @@ app.post('/api/register', async (req, res) => {
     await user.save();
     res.json({ message: 'User registered successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error registering user' });
   }
 });
 
+// Login User
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -57,20 +65,23 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ email: user.email }, JWT_SECRET);
     res.json({ token });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Login error' });
   }
 });
 
-// Protected Routes
+// Get all courses (protected)
 app.get('/api/courses', verifyToken, async (req, res) => {
   try {
     const courses = await Course.find();
     res.json(courses);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error loading courses' });
   }
 });
 
+// Create new course (protected)
 app.post('/api/courses/create', verifyToken, async (req, res) => {
   try {
     const { title, description, instructor } = req.body;
@@ -78,6 +89,7 @@ app.post('/api/courses/create', verifyToken, async (req, res) => {
     await newCourse.save();
     res.json({ message: 'Course added successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error adding course' });
   }
 });
