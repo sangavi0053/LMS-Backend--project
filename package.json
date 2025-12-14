@@ -1,10 +1,10 @@
 {
   "name": "lms-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +16,13 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1"
   },
-  "description": ""
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sangavi0053/LMS-Backend--project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sangavi0053/LMS-Backend--project/issues"
+  },
+  "homepage": "https://github.com/sangavi0053/LMS-Backend--project#readme",
+  "description": "Backend for LMS project using Node.js, Express, MongoDB, JWT authentication"
 }

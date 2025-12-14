@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, 'secret123'); // secret key used in login
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
     req.user = decoded;
     next(); // ✅ Token is valid — continue to route
   } catch (err) {
