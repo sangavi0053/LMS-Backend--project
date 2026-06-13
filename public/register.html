@@ -48,7 +48,12 @@
       });
 
       const data = await response.json();
-      alert(data.message);
+if (response.ok) {
+  alert("✅ Registered successfully! Please login.");
+  window.location.href = 'login.html';
+} else {
+  alert("❌ " + data.message);
+}
     }
   </script>
 </body>
