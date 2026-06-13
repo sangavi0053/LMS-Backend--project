@@ -4,104 +4,323 @@
   <meta charset="UTF-8">
   <title>Admin Dashboard - LMS</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; background: #f0f4f8; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0f1e;
+      color: #fff;
+      min-height: 100vh;
+    }
 
     .navbar {
-      background-color: #007acc;
-      color: white;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .navbar h1 { font-size: 20px; }
-    .navbar button {
-      background: #ff4d4d;
+
+    .navbar h1 { font-size: 22px; color: #fff; letter-spacing: 2px; }
+    .navbar h1 span { color: #007aff; }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #007aff, #0055cc);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 15px; }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff4d4d, #cc0000);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 5px;
+      padding: 8px 18px;
+      border-radius: 8px;
       cursor: pointer;
-    }
-
-    .container { padding: 30px; }
-
-    .add-course-form {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-    .add-course-form h2 { margin-bottom: 15px; color: #333; }
-    .add-course-form input,
-    .add-course-form textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
       font-size: 14px;
+      transition: all 0.3s;
     }
-    .add-course-form button {
-      background: #007acc;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,77,77,0.4);
+    }
+
+    .container { padding: 40px 30px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .stat-card .stat-icon { font-size: 28px; }
+    .stat-card .stat-info h4 { font-size: 22px; color: #007aff; }
+    .stat-card .stat-info p { color: #aaa; font-size: 12px; }
+
+    .add-form {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .add-form h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .input-group { position: relative; }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 13px 13px 13px 42px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.3s;
+      outline: none;
+      font-family: 'Segoe UI', sans-serif;
+      resize: none;
+    }
+
+    .input-group textarea { padding-top: 13px; min-height: 90px; }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      border-color: #007aff;
+      background: rgba(0,122,255,0.1);
+    }
+
+    .input-group input::placeholder,
+    .input-group textarea::placeholder { color: #555; }
+
+    .input-group .icon {
+      position: absolute;
+      left: 13px;
+      top: 14px;
       font-size: 15px;
     }
-    .add-course-form button:hover { background: #005fa3; }
 
-    .courses-section h2 { margin-bottom: 15px; color: #333; }
-    .course-card {
-      background: white;
-      padding: 20px;
+    .add-btn {
+      margin-top: 15px;
+      padding: 13px 30px;
+      background: linear-gradient(135deg, #007aff, #0055cc);
+      border: none;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 1px;
     }
-    .course-info h3 { color: #007acc; margin-bottom: 5px; }
-    .course-info p { color: #555; font-size: 14px; }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,122,255,0.4);
+    }
+
+    .form-message {
+      margin-top: 12px;
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    .courses-section h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 25px;
+      transition: all 0.3s;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .course-card:hover {
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+    }
+
+    .course-icon { font-size: 32px; margin-bottom: 12px; }
+
+    .course-card h3 {
+      font-size: 17px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .course-card p {
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .course-instructor {
+      color: #007aff;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
     .delete-btn {
+      width: 100%;
+      padding: 9px;
+      background: rgba(255,77,77,0.15);
+      border: 1px solid rgba(255,77,77,0.3);
+      border-radius: 8px;
+      color: #ff4d4d;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+
+    .delete-btn:hover {
       background: #ff4d4d;
       color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 5px;
-      cursor: pointer;
     }
-    .delete-btn:hover { background: #cc0000; }
-    .message { color: green; margin-top: 10px; font-weight: bold; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+      grid-column: 1 / -1;
+    }
+
+    .empty-state .icon { font-size: 50px; margin-bottom: 15px; }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #aaa;
+      grid-column: 1 / -1;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #007aff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
   <div class="navbar">
-    <h1>🛠️ Admin Dashboard</h1>
-    <button onclick="logout()">Logout</button>
+    <h1>LMS <span>Portal</span></h1>
+    <div class="nav-right">
+      <span class="admin-badge">🛠️ Admin</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
   <div class="container">
-    <div class="add-course-form">
+
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-info">
+          <h4 id="courseCount">-</h4>
+          <p>Total Courses</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛠️</div>
+        <div class="stat-info">
+          <h4>Admin</h4>
+          <p>Your Role</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="add-form">
       <h2>➕ Add New Course</h2>
-      <input type="text" id="title" placeholder="Course Title" />
-      <textarea id="description" placeholder="Course Description" rows="3"></textarea>
-      <input type="text" id="instructor" placeholder="Instructor Name" />
-      <button onclick="addCourse()">Add Course</button>
-      <div class="message" id="formMessage"></div>
+      <div class="form-grid">
+        <div class="input-group">
+          <span class="icon">📘</span>
+          <input type="text" id="title" placeholder="Course Title" />
+        </div>
+        <div class="input-group">
+          <span class="icon">👨‍🏫</span>
+          <input type="text" id="instructor" placeholder="Instructor Name" />
+        </div>
+        <div class="input-group full">
+          <span class="icon">📝</span>
+          <textarea id="description" placeholder="Course Description"></textarea>
+        </div>
+      </div>
+      <button class="add-btn" onclick="addCourse()">➕ Add Course</button>
+      <div class="form-message" id="formMessage"></div>
     </div>
 
     <div class="courses-section">
       <h2>📚 All Courses</h2>
-      <div id="courseList">Loading...</div>
+      <div class="courses-grid" id="courseList">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading courses...</p>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <script>
@@ -109,32 +328,46 @@
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    if (!token || role !== 'admin') {
-      window.location.href = 'login.html';
-    }
+    if (!token || role !== 'admin') window.location.href = 'login.html';
+
+    const icons = ['📘', '🎯', '💡', '🚀', '🔬', '🎨', '💻', '📊', '🌐', '⚡'];
 
     async function loadCourses() {
-      const res = await fetch(`${API_BASE}/api/courses`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const courses = await res.json();
-      const list = document.getElementById('courseList');
+      try {
+        const res = await fetch(`${API_BASE}/api/courses`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const courses = await res.json();
+        const list = document.getElementById('courseList');
 
-      if (courses.length === 0) {
-        list.innerHTML = '<p>No courses yet. Add one above!</p>';
-        return;
-      }
+        document.getElementById('courseCount').textContent = courses.length;
 
-      list.innerHTML = courses.map(course => `
-        <div class="course-card">
-          <div class="course-info">
+        if (courses.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">📭</div>
+              <p>No courses yet. Add one above!</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = courses.map((course, i) => `
+          <div class="course-card">
+            <div class="course-icon">${icons[i % icons.length]}</div>
             <h3>${course.title}</h3>
             <p>${course.description}</p>
-            <p><strong>Instructor:</strong> ${course.instructor}</p>
+            <div class="course-instructor">👨‍🏫 ${course.instructor}</div>
+            <button class="delete-btn" onclick="deleteCourse('${course._id}')">🗑️ Delete Course</button>
           </div>
-          <button class="delete-btn" onclick="deleteCourse('${course._id}')">🗑️ Delete</button>
-        </div>
-      `).join('');
+        `).join('');
+
+      } catch (err) {
+        document.getElementById('courseList').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⚠️</div>
+            <p>Failed to load courses. Please refresh.</p>
+          </div>`;
+      }
     }
 
     async function addCourse() {
@@ -144,7 +377,7 @@
       const msg = document.getElementById('formMessage');
 
       if (!title || !description || !instructor) {
-        msg.style.color = 'red';
+        msg.style.color = '#ff4d4d';
         msg.textContent = '❌ All fields required!';
         return;
       }
@@ -160,14 +393,15 @@
 
       const data = await res.json();
       if (res.ok) {
-        msg.style.color = 'green';
-        msg.textContent = '✅ Course added!';
+        msg.style.color = '#00ff88';
+        msg.textContent = '✅ Course added successfully!';
         document.getElementById('title').value = '';
         document.getElementById('description').value = '';
         document.getElementById('instructor').value = '';
+        setTimeout(() => msg.textContent = '', 3000);
         loadCourses();
       } else {
-        msg.style.color = 'red';
+        msg.style.color = '#ff4d4d';
         msg.textContent = '❌ ' + data.message;
       }
     }

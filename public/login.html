@@ -4,81 +4,227 @@
   <meta charset="UTF-8">
   <title>Login - LMS</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f4f8;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0f1e;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      margin: 0;
+      overflow: hidden;
     }
 
-    h2 {
-      color: #333;
+    .bg-animation {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      overflow: hidden;
     }
 
-    form {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 300px;
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px; height: 20px;
+      background: rgba(0, 122, 255, 0.15);
+      animation: animate 25s linear infinite;
+      bottom: -150px;
+      border-radius: 50%;
     }
 
-    input {
+    .bg-animation span:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+    .bg-animation span:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+    .bg-animation span:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+    .bg-animation span:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+    .bg-animation span:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+    .bg-animation span:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+    .bg-animation span:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+    .bg-animation span:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+    .bg-animation span:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+    .bg-animation span:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+    @keyframes animate {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px;
+      width: 380px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    .logo h1 span { color: #007aff; }
+
+    .logo p { color: #aaa; font-size: 13px; margin-top: 5px; }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-group input {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 14px 14px 14px 45px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: #007aff;
+      background: rgba(0,122,255,0.1);
+    }
+
+    .input-group input::placeholder { color: #666; }
+
+    .input-group .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
     }
 
     button {
       width: 100%;
-      padding: 10px;
-      background-color: #007acc;
+      padding: 14px;
+      background: linear-gradient(135deg, #007aff, #0055cc);
       border: none;
+      border-radius: 10px;
       color: white;
       font-size: 16px;
-      border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 1px;
     }
 
     button:hover {
-      background-color: #005fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,122,255,0.4);
     }
+
+    button:active { transform: translateY(0); }
 
     .message {
       margin-top: 15px;
-      color: red;
+      text-align: center;
+      font-size: 13px;
+      color: #ff4d4d;
+      min-height: 20px;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .register-link a {
+      color: #007aff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .register-link a:hover { text-decoration: underline; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: #444;
+      font-size: 12px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 10px;
     }
   </style>
 </head>
 <body>
 
-  <h2>Login to LMS</h2>
+  <div class="bg-animation">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
 
-  <form id="loginForm">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit">Login</button>
+  <div class="card">
+    <div class="logo">
+      <h1>LMS <span>Portal</span></h1>
+      <p>Learning Management System</p>
+    </div>
+
+    <div class="input-group">
+      <span class="icon">📧</span>
+      <input type="email" id="email" placeholder="Email Address" required />
+    </div>
+
+    <div class="input-group">
+      <span class="icon">🔒</span>
+      <input type="password" id="password" placeholder="Password" required />
+    </div>
+
+    <button onclick="loginUser()">Login →</button>
+
     <div class="message" id="message"></div>
-  </form>
+
+    <div class="divider">or</div>
+
+    <div class="register-link">
+      Don't have an account? <a href="register.html">Register here</a>
+    </div>
+  </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
+    const API_BASE = 'https://lms-backend-project-4.onrender.com';
+
+    async function loginUser() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const messageDiv = document.getElementById('message');
-      messageDiv.textContent = ''; // Clear previous message
+      messageDiv.textContent = '';
+
+      if (!email || !password) {
+        messageDiv.textContent = '❌ Please fill all fields!';
+        return;
+      }
 
       try {
-        const response = await fetch('https://lms-backend-project-4.onrender.com/api/login', {
+        const response = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -89,25 +235,27 @@
         if (response.ok) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('role', data.role);
-if (data.role === 'admin') {
-  window.location.href = 'admin-dashboard.html';
-} else {
-  window.location.href = 'dashboard.html';
-}
+          messageDiv.style.color = '#00ff88';
+          messageDiv.textContent = '✅ Login successful! Redirecting...';
+          setTimeout(() => {
+            if (data.role === 'admin') {
+              window.location.href = 'admin-dashboard.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 1000);
         } else {
-          messageDiv.textContent = "❌ " + (data.message || "Login failed");
+          messageDiv.textContent = '❌ ' + (data.message || 'Login failed');
         }
       } catch (err) {
-        console.error("Login error:", err);
-        messageDiv.textContent = "❌ Something went wrong. Please try again.";
+        messageDiv.textContent = '❌ Something went wrong. Please try again.';
       }
+    }
+
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') loginUser();
     });
   </script>
 
 </body>
 </html>
-
-
-
-
-

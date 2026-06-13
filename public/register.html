@@ -1,60 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Register</title>
+  <meta charset="UTF-8">
+  <title>Register - LMS</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: Arial;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0f1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px; height: 20px;
+      background: rgba(0, 122, 255, 0.15);
+      animation: animate 25s linear infinite;
+      bottom: -150px;
+      border-radius: 50%;
+    }
+
+    .bg-animation span:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+    .bg-animation span:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+    .bg-animation span:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+    .bg-animation span:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+    .bg-animation span:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+    .bg-animation span:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+    .bg-animation span:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+    .bg-animation span:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+    .bg-animation span:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+    .bg-animation span:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+    @keyframes animate {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
       padding: 40px;
+      width: 380px;
+      animation: fadeIn 0.8s ease;
     }
-    input {
-      padding: 10px;
-      width: 300px;
-      margin: 10px 0;
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 { font-size: 26px; color: #fff; letter-spacing: 2px; }
+    .logo h1 span { color: #007aff; }
+    .logo p { color: #aaa; font-size: 13px; margin-top: 5px; }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: #007aff;
+      background: rgba(0,122,255,0.1);
+    }
+
+    .input-group input::placeholder { color: #666; }
+
+    .input-group .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+
     button {
-      padding: 10px 20px;
-      background-color: #28a745;
-      color: white;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #007aff, #0055cc);
       border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 1px;
     }
+
     button:hover {
-      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,122,255,0.4);
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 13px;
+      color: #ff4d4d;
+      min-height: 20px;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .login-link a {
+      color: #007aff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-link a:hover { text-decoration: underline; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: #444;
+      font-size: 12px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 10px;
     }
   </style>
 </head>
 <body>
-  <h2>User Registration</h2>
-  <form onsubmit="registerUser(event)">
-    <input type="text" id="name" placeholder="Name" required><br>
-    <input type="email" id="email" placeholder="Email" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-  </form>
+
+  <div class="bg-animation">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="card">
+    <div class="logo">
+      <h1>LMS <span>Portal</span></h1>
+      <p>Create your account</p>
+    </div>
+
+    <div class="input-group">
+      <span class="icon">👤</span>
+      <input type="text" id="name" placeholder="Full Name" required />
+    </div>
+
+    <div class="input-group">
+      <span class="icon">📧</span>
+      <input type="email" id="email" placeholder="Email Address" required />
+    </div>
+
+    <div class="input-group">
+      <span class="icon">🔒</span>
+      <input type="password" id="password" placeholder="Password" required />
+    </div>
+
+    <button onclick="registerUser()">Register →</button>
+
+    <div class="message" id="message"></div>
+
+    <div class="divider">or</div>
+
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>
 
   <script>
-    async function registerUser(event) {
-      event.preventDefault();
+    const API_BASE = 'https://lms-backend-project-4.onrender.com';
 
+    async function registerUser() {
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = '';
 
-      const response = await fetch('https://lms-backend-project-4.onrender.com/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
+      if (!name || !email || !password) {
+        messageDiv.textContent = '❌ Please fill all fields!';
+        return;
+      }
 
-      const data = await response.json();
-if (response.ok) {
-  alert("✅ Registered successfully! Please login.");
-  window.location.href = 'login.html';
-} else {
-  alert("❌ " + data.message);
-}
+      try {
+        const response = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageDiv.style.color = '#00ff88';
+          messageDiv.textContent = '✅ Registered! Redirecting to login...';
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1500);
+        } else {
+          messageDiv.textContent = '❌ ' + data.message;
+        }
+      } catch (err) {
+        messageDiv.textContent = '❌ Something went wrong!';
+      }
     }
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') registerUser();
+    });
   </script>
+
 </body>
 </html>

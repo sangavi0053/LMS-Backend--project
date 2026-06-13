@@ -1,122 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>LMS Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Dashboard - LMS</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #eef2f5;
-      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0f1e;
+      color: #fff;
+      min-height: 100vh;
     }
-    h1 {
-      text-align: center;
-      color: #333;
+
+    .navbar {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    #logoutBtn {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      background-color: #ff4d4d;
-      border: none;
+
+    .navbar h1 { font-size: 22px; color: #fff; letter-spacing: 2px; }
+    .navbar h1 span { color: #007aff; }
+
+    .nav-right { display: flex; align-items: center; gap: 15px; }
+    .nav-right .welcome { color: #aaa; font-size: 14px; }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff4d4d, #cc0000);
       color: white;
-      padding: 10px 15px;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      cursor: pointer;
       font-size: 14px;
-      border-radius: 5px;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,77,77,0.4);
+    }
+
+    .container { padding: 40px 30px; }
+
+    .page-title {
+      margin-bottom: 30px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .page-title h2 { font-size: 24px; color: #fff; }
+    .page-title p { color: #aaa; font-size: 14px; margin-top: 5px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 25px;
+      transition: all 0.3s;
+      animation: fadeIn 0.6s ease;
       cursor: pointer;
     }
-    #logoutBtn:hover {
-      background-color: #d93636;
+
+    .course-card:hover {
+      transform: translateY(-5px);
+      border-color: #007aff;
+      box-shadow: 0 10px 30px rgba(0,122,255,0.2);
+      background: rgba(0,122,255,0.08);
     }
-    #courseList {
-      max-width: 700px;
-      margin: 60px auto 0;
-    }
-    .course {
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
+
+    .course-icon {
+      font-size: 36px;
       margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .course h3 {
-      margin: 0 0 5px;
-      color: #007acc;
+
+    .course-card h3 {
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 10px;
     }
-    .course p {
-      margin: 5px 0;
-      color: #444;
+
+    .course-card p {
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 15px;
     }
-    .course small {
-      display: block;
-      margin-top: 8px;
-      color: #666;
+
+    .course-instructor {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #007aff;
+      font-size: 13px;
+      font-weight: bold;
     }
+
+    .badge {
+      display: inline-block;
+      background: rgba(0,122,255,0.2);
+      color: #007aff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #aaa;
+    }
+
+    .empty-state .icon { font-size: 60px; margin-bottom: 20px; }
+    .empty-state h3 { font-size: 20px; color: #fff; margin-bottom: 10px; }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #aaa;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #007aff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .stat-card .stat-icon { font-size: 28px; }
+    .stat-card .stat-info h4 { font-size: 22px; color: #007aff; }
+    .stat-card .stat-info p { color: #aaa; font-size: 12px; }
   </style>
 </head>
 <body>
 
-  <!-- 🔓 Logout Button -->
-  <button id="logoutBtn" onclick="logout()">Logout</button>
+  <div class="navbar">
+    <h1>LMS <span>Portal</span></h1>
+    <div class="nav-right">
+      <span class="welcome" id="welcomeMsg">👋 Welcome!</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
 
-  <!-- 📚 Dashboard Title -->
-  <h1>📚 Welcome to Your LMS Dashboard</h1>
+  <div class="container">
+    <div class="page-title">
+      <h2>📚 Available Courses</h2>
+      <p>Explore and learn from our courses</p>
+    </div>
 
-  <!-- 📦 Courses Container -->
-  <div id="courseList">Loading courses...</div>
+    <div class="stats-bar" id="statsBar"></div>
 
-  <!-- 🔐 Token Check -->
+    <div class="courses-grid" id="courseList">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading courses...</p>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Access denied. Please login first.");
-      window.location.href = "login.html";
+    const API_BASE = 'https://lms-backend-project-4.onrender.com';
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+    if (!token) window.location.href = 'login.html';
+    if (role === 'admin') window.location.href = 'admin-dashboard.html';
+
+    const icons = ['📘', '🎯', '💡', '🚀', '🔬', '🎨', '💻', '📊', '🌐', '⚡'];
+
+    async function loadCourses() {
+      try {
+        const res = await fetch(`${API_BASE}/api/courses`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const courses = await res.json();
+        const list = document.getElementById('courseList');
+        const statsBar = document.getElementById('statsBar');
+
+        statsBar.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+              <h4>${courses.length}</h4>
+              <p>Total Courses</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-info">
+              <h4>Student</h4>
+              <p>Your Role</p>
+            </div>
+          </div>
+        `;
+
+        if (courses.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">📭</div>
+              <h3>No courses available yet</h3>
+              <p>Check back later for new courses!</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = courses.map((course, i) => `
+          <div class="course-card">
+            <div class="course-icon">${icons[i % icons.length]}</div>
+            <div class="badge">Course</div>
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <div class="course-instructor">
+              👨‍🏫 ${course.instructor}
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        document.getElementById('courseList').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⚠️</div>
+            <h3>Failed to load courses</h3>
+            <p>Please try refreshing the page</p>
+          </div>`;
+      }
     }
 
     function logout() {
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
+      localStorage.clear();
+      window.location.href = 'login.html';
     }
 
-    // 📡 Fetch Courses From Backend
-    fetch("https://lms-backend-project-4.onrender.com/api/courses", {
-      headers: {
-        Authorization: `Bearer ${token}`
+    // Set welcome message from token
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.name) {
+        document.getElementById('welcomeMsg').textContent = `👋 Welcome, ${payload.name}!`;
       }
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(courses => {
-      const courseList = document.getElementById("courseList");
-      courseList.innerHTML = '';
+    } catch(e) {}
 
-      if (courses.length === 0) {
-        courseList.innerHTML = '<p>No courses available.</p>';
-        return;
-      }
-
-      courses.forEach(course => {
-        const div = document.createElement("div");
-        div.className = "course";
-        const date = new Date(course.createdAt).toLocaleDateString();
-
-        div.innerHTML = `
-          <h3>${course.title}</h3>
-          <p>${course.description}</p>
-          <small><strong>Created By:</strong> ${course.instructor || "Unknown"}</small>
-          <small><strong>Added On:</strong> ${date}</small>
-        `;
-        courseList.appendChild(div);
-      });
-    })
-    .catch(err => {
-      console.error("❌ Error loading courses:", err);
-      document.getElementById("courseList").innerHTML = "<p style='color:red;'>Error loading courses.</p>";
-    });
+    loadCourses();
   </script>
 
 </body>
