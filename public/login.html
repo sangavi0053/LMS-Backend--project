@@ -88,8 +88,12 @@
 
         if (response.ok) {
           localStorage.setItem('token', data.token);
-          alert("✅ Login successful!");
-          window.location.href = 'dashboard.html';
+          localStorage.setItem('role', data.role);
+if (data.role === 'admin') {
+  window.location.href = 'admin-dashboard.html';
+} else {
+  window.location.href = 'dashboard.html';
+}
         } else {
           messageDiv.textContent = "❌ " + (data.message || "Login failed");
         }
@@ -102,3 +106,8 @@
 
 </body>
 </html>
+
+
+
+
+

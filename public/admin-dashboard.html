@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - LMS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f4f8; }
+
+    .navbar {
+      background-color: #007acc;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 { font-size: 20px; }
+    .navbar button {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .container { padding: 30px; }
+
+    .add-course-form {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .add-course-form h2 { margin-bottom: 15px; color: #333; }
+    .add-course-form input,
+    .add-course-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .add-course-form button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+    .add-course-form button:hover { background: #005fa3; }
+
+    .courses-section h2 { margin-bottom: 15px; color: #333; }
+    .course-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .course-info h3 { color: #007acc; margin-bottom: 5px; }
+    .course-info p { color: #555; font-size: 14px; }
+    .delete-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .delete-btn:hover { background: #cc0000; }
+    .message { color: green; margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>🛠️ Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="add-course-form">
+      <h2>➕ Add New Course</h2>
+      <input type="text" id="title" placeholder="Course Title" />
+      <textarea id="description" placeholder="Course Description" rows="3"></textarea>
+      <input type="text" id="instructor" placeholder="Instructor Name" />
+      <button onclick="addCourse()">Add Course</button>
+      <div class="message" id="formMessage"></div>
+    </div>
+
+    <div class="courses-section">
+      <h2>📚 All Courses</h2>
+      <div id="courseList">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://lms-backend-project-4.onrender.com';
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+    if (!token || role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+
+    async function loadCourses() {
+      const res = await fetch(`${API_BASE}/api/courses`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const courses = await res.json();
+      const list = document.getElementById('courseList');
+
+      if (courses.length === 0) {
+        list.innerHTML = '<p>No courses yet. Add one above!</p>';
+        return;
+      }
+
+      list.innerHTML = courses.map(course => `
+        <div class="course-card">
+          <div class="course-info">
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <p><strong>Instructor:</strong> ${course.instructor}</p>
+          </div>
+          <button class="delete-btn" onclick="deleteCourse('${course._id}')">🗑️ Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function addCourse() {
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const instructor = document.getElementById('instructor').value;
+      const msg = document.getElementById('formMessage');
+
+      if (!title || !description || !instructor) {
+        msg.style.color = 'red';
+        msg.textContent = '❌ All fields required!';
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/api/courses/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, description, instructor })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        msg.style.color = 'green';
+        msg.textContent = '✅ Course added!';
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('instructor').value = '';
+        loadCourses();
+      } else {
+        msg.style.color = 'red';
+        msg.textContent = '❌ ' + data.message;
+      }
+    }
+
+    async function deleteCourse(id) {
+      if (!confirm('Delete this course?')) return;
+      const res = await fetch(`${API_BASE}/api/courses/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) loadCourses();
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    loadCourses();
+  </script>
+
+</body>
+</html>
